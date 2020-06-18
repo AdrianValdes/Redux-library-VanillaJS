@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Todos/Goals</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js"></script>
   </head>
   <body>
     <div>
@@ -25,50 +26,6 @@
           Math.random().toString(36).substring(2) +
           new Date().getTime().toString(36)
         );
-      }
-      //Library code
-      function createStore(reducer) {
-        //The store in Redux has four parts
-        // 1. A state
-        // 2. A way to get the state (getState)
-        // 3. A way to listen to changes on the state. (subscribe)
-        // 4. A way to update the state (dispatch)
-
-        //Define the state
-        let state;
-
-        //The listeners will be an array of functions
-        let listeners = [];
-
-        // Get the state
-        const getState = () => state;
-
-        // A way to listen to the changes of the state
-        const subscribe = (listener) => {
-          listeners.push(listener);
-
-          // A way to unsubscribe from listening
-          return () => {
-            listeners = listeners.filter((l) => l !== listener);
-          };
-        };
-
-        // A way of updating the state. We need this way to be completely predictable.
-        //Whenever we call dispatch() we dispatch the action itself.
-        const dispatch = (action) => {
-          //call todos function because that will
-          //get us the new state of our application
-          state = reducer(state, action);
-
-          // loop over listeners to invoke them. The listeners will know the state was updated
-          listeners.forEach((listener) => listener());
-        };
-
-        return {
-          getState,
-          subscribe,
-          dispatch,
-        };
       }
 
       //App Code
@@ -142,14 +99,12 @@
         }
       }
 
-      function app(state = {}, action) {
-        return {
-          todos: todos(state.todos, action),
-          goals: goals(state.goals, action),
-        };
-      }
-
-      const store = createStore(app);
+      const store = Redux.createStore(
+        Redux.combineReducers({
+          todos,
+          goals,
+        })
+      );
 
       store.subscribe(() => {
         const { goals, todos } = store.getState();

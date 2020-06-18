@@ -92,6 +92,16 @@
           };
         };
       }
+
+      const logger = (store) => (next) => (action) => {
+        console.group(action.type);
+        console.log('The action', action);
+        const result = next(action);
+        console.log('The new state:', store.getState());
+        console.groupEnd();
+        return result;
+      };
+
       //Reducer function
       function todos(state = [], action) {
         switch (action.type) {
@@ -127,7 +137,7 @@
           todos,
           goals,
         }),
-        Redux.applyMiddleware(checker)
+        Redux.applyMiddleware(checker, logger)
       );
 
       store.subscribe(() => {
@@ -139,8 +149,6 @@
         goals.forEach(addGoalToDOM);
         todos.forEach(addTodoToDOM);
       });
-
-      store.dispatch(removeGoalAction(0));
 
       // DOM CODE
       function createRemoveButton(onClick) {

@@ -122,9 +122,11 @@ function app(state = {}, action) {
 }
 
 const store = createStore(app);
+
 store.subscribe(() => {
   console.log('The new state is: ', store.getState());
 });
+
 store.dispatch(
   addTodoAction({
     id: 0,
